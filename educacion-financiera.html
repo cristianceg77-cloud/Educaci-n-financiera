@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Educación Financiera · CEG</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=IBM+Plex+Mono:wght@300;400;500&family=Literata:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c0f;
+    --bg2: #0f1218;
+    --bg3: #141820;
+    --surface: #1a1f2e;
+    --surface2: #222838;
+    --gold: #c9a84c;
+    --gold2: #e8c96a;
+    --gold-dim: rgba(201,168,76,0.12);
+    --green: #3ddc84;
+    --red: #ff5c5c;
+    --blue: #5b9bd5;
+    --text: #e8e6df;
+    --text-dim: #8a8880;
+    --text-muted: #4a4a52;
+    --border: rgba(201,168,76,0.15);
+    --border2: rgba(255,255,255,0.06);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Literata', Georgia, serif;
+    font-size: 16px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ── NOISE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  /* ── GRID BACKGROUND ── */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(201,168,76,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(201,168,76,0.03) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── HEADER / NAV ── */
+  header {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2.5rem;
+    height: 60px;
+    background: rgba(10,12,15,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: var(--gold);
+    letter-spacing: 0.08em;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .logo span { color: var(--text-dim); font-weight: 400; font-size: 0.75rem; letter-spacing: 0.15em; }
+
+  nav { display: flex; gap: 0.25rem; }
+  nav a {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    text-decoration: none;
+    padding: 0.35rem 0.75rem;
+    border-radius: 4px;
+    letter-spacing: 0.05em;
+    transition: color 0.2s, background 0.2s;
+  }
+  nav a:hover { color: var(--gold); background: var(--gold-dim); }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 7rem 2.5rem 4rem;
+    overflow: hidden;
+    z-index: 1;
+  }
+
+  .hero-glow {
+    position: absolute;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(201,168,76,0.08) 0%, transparent 70%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+
+  .hero-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--gold);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.2s forwards;
+  }
+
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(2.8rem, 7vw, 5.5rem);
+    line-height: 1.0;
+    letter-spacing: -0.02em;
+    max-width: 800px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.35s forwards;
+  }
+
+  .hero h1 em {
+    font-style: normal;
+    color: var(--gold);
+  }
+
+  .hero-sub {
+    font-family: 'Literata', serif;
+    font-weight: 300;
+    font-style: italic;
+    font-size: 1.1rem;
+    color: var(--text-dim);
+    max-width: 520px;
+    margin-top: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.5s forwards;
+  }
+
+  .hero-quote {
+    position: absolute;
+    right: 4rem;
+    bottom: 6rem;
+    max-width: 280px;
+    text-align: right;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.8s forwards;
+  }
+  .hero-quote blockquote {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+    border-right: 2px solid var(--gold);
+    padding-right: 1rem;
+  }
+  .hero-quote cite {
+    display: block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--gold);
+    letter-spacing: 0.1em;
+    margin-top: 0.5rem;
+  }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 2rem;
+    left: 2.5rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--text-muted);
+    letter-spacing: 0.15em;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 1.2s forwards;
+  }
+  .scroll-hint::before {
+    content: '';
+    display: inline-block;
+    width: 24px; height: 1px;
+    background: var(--text-muted);
+  }
+
+  /* ── TICKER STRIP ── */
+  .ticker-strip {
+    position: relative;
+    z-index: 1;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    overflow: hidden;
+    height: 36px;
+    display: flex;
+    align-items: center;
+  }
+  .ticker-track {
+    display: flex;
+    gap: 3rem;
+    animation: ticker 30s linear infinite;
+    white-space: nowrap;
+    padding: 0 1rem;
+  }
+  .ticker-item {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.05em;
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+  .ticker-item .sym { color: var(--gold); font-weight: 500; }
+  .ticker-item .up { color: var(--green); }
+  .ticker-item .dn { color: var(--red); }
+
+  /* ── SECTIONS ── */
+  section {
+    position: relative;
+    z-index: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 5rem 2.5rem;
+  }
+
+  .section-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--gold);
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .section-label::before {
+    content: '';
+    display: inline-block;
+    width: 20px; height: 1px;
+    background: var(--gold);
+  }
+
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+    line-height: 1.15;
+    margin-bottom: 1rem;
+  }
+
+  /* ── PRIMER PASO ── */
+  .primer-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-top: 3rem;
+  }
+
+  .step-card {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 8px;
+    padding: 1.75rem;
+    transition: border-color 0.3s, transform 0.3s;
+  }
+  .step-card:hover {
+    border-color: var(--border);
+    transform: translateY(-3px);
+  }
+  .step-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--gold);
+    letter-spacing: 0.2em;
+    margin-bottom: 0.75rem;
+  }
+  .step-card h3 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+  .step-card p {
+    font-size: 0.875rem;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+
+  /* ── INSTRUMENTOS ── */
+  .instr-section { background: var(--bg2); padding: 5rem 0; }
+  .instr-section > * { max-width: 1100px; margin-left: auto; margin-right: auto; padding-left: 2.5rem; padding-right: 2.5rem; }
+
+  .instr-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin: 2rem 0 2.5rem;
+    max-width: 1100px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 2.5rem;
+    padding-right: 2.5rem;
+  }
+  .tab-btn {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    padding: 0.5rem 1.25rem;
+    border: 1px solid var(--border2);
+    background: transparent;
+    color: var(--text-dim);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .tab-btn.active, .tab-btn:hover {
+    background: var(--gold-dim);
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+
+  .instr-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 2.5rem;
+  }
+
+  .instr-card {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 8px;
+    padding: 1.5rem;
+    transition: border-color 0.3s;
+  }
+  .instr-card:hover { border-color: rgba(201,168,76,0.3); }
+
+  .instr-badge {
+    display: inline-block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    padding: 0.2rem 0.5rem;
+    border-radius: 3px;
+    margin-bottom: 0.75rem;
+  }
+  .badge-fija { background: rgba(91,155,213,0.15); color: var(--blue); border: 1px solid rgba(91,155,213,0.2); }
+  .badge-var { background: rgba(61,220,132,0.12); color: var(--green); border: 1px solid rgba(61,220,132,0.2); }
+  .badge-alt { background: rgba(201,168,76,0.12); color: var(--gold); border: 1px solid rgba(201,168,76,0.2); }
+
+  .instr-card h3 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+  .instr-card p {
+    font-size: 0.82rem;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+
+  .risk-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 1rem;
+  }
+  .risk-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+  }
+  .risk-dots { display: flex; gap: 3px; }
+  .risk-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--surface2);
+  }
+  .risk-dot.on { background: var(--gold); }
+
+  /* ── CONCEPTOS CLAVE ── */
+  .conceptos-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border2);
+    border: 1px solid var(--border2);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-top: 3rem;
+  }
+  .concepto-item {
+    background: var(--surface);
+    padding: 2rem 1.75rem;
+    transition: background 0.2s;
+  }
+  .concepto-item:hover { background: var(--surface2); }
+  .concepto-icon {
+    font-size: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+  .concepto-item h4 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-bottom: 0.4rem;
+    color: var(--gold2);
+  }
+  .concepto-item p {
+    font-size: 0.82rem;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+
+  /* ── BROKERS ── */
+  .brokers-row {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+  }
+  .broker-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text-dim);
+    text-decoration: none;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .broker-tag::before {
+    content: '↗';
+    font-size: 0.7rem;
+    color: var(--gold);
+  }
+  .broker-tag:hover {
+    color: var(--gold);
+    border-color: var(--gold);
+    background: var(--gold-dim);
+  }
+
+  .cnv-note {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--gold);
+    border-radius: 0 6px 6px 0;
+    padding: 1.25rem 1.5rem;
+    margin-top: 2rem;
+    font-size: 0.875rem;
+    color: var(--text-dim);
+  }
+  .cnv-note strong { color: var(--gold); font-family: 'IBM Plex Mono', monospace; font-size: 0.8rem; }
+  .cnv-note a { color: var(--blue); }
+
+  /* ── BIBLIOTECA ── */
+  .biblioteca-section { background: var(--bg3); }
+  .libro-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-top: 2.5rem;
+  }
+  .libro-item {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    padding: 1.25rem;
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 6px;
+    transition: border-color 0.2s;
+  }
+  .libro-item:hover { border-color: var(--border); }
+  .libro-spine {
+    width: 8px;
+    min-height: 60px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+  .libro-info h4 {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+  }
+  .libro-info p {
+    font-size: 0.78rem;
+    color: var(--text-dim);
+  }
+
+  /* ── PERFIL INVERSOR ── */
+  .perfiles-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-top: 2.5rem;
+  }
+  .perfil-card {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 8px;
+    padding: 1.75rem;
+    text-align: center;
+    transition: all 0.3s;
+  }
+  .perfil-card:hover { transform: translateY(-4px); border-color: var(--border); }
+  .perfil-emoji { font-size: 2rem; margin-bottom: 0.75rem; }
+  .perfil-card h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+  .perfil-card p { font-size: 0.8rem; color: var(--text-dim); }
+  .perfil-bar {
+    display: flex;
+    gap: 3px;
+    justify-content: center;
+    margin-top: 1rem;
+  }
+  .perfil-seg {
+    height: 4px;
+    width: 24px;
+    border-radius: 2px;
+    background: var(--surface2);
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 2.5rem;
+    border: none;
+    border-top: 1px solid var(--border2);
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    position: relative;
+    z-index: 1;
+    border-top: 1px solid var(--border);
+    padding: 2.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  footer .logo-foot {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    color: var(--gold);
+    font-size: 0.9rem;
+    letter-spacing: 0.08em;
+  }
+  footer p {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+  }
+  footer .disclaimer {
+    font-family: 'Literata', serif;
+    font-style: italic;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    max-width: 400px;
+    line-height: 1.5;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes ticker {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+
+  /* ── REVEAL ON SCROLL ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .primer-grid, .instr-grid, .conceptos-grid, .perfiles-grid { grid-template-columns: 1fr; }
+    .libro-grid { grid-template-columns: 1fr; }
+    .hero-quote { display: none; }
+    nav { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <a href="#" class="logo">CEG <span>/ Educación Financiera</span></a>
+  <nav>
+    <a href="#inicio">Inicio</a>
+    <a href="#instrumentos">Instrumentos</a>
+    <a href="#conceptos">Conceptos</a>
+    <a href="#brokers">Brokers</a>
+    <a href="#biblioteca">Biblioteca</a>
+  </nav>
+</header>
+
+<!-- HERO -->
+<div class="hero" id="inicio">
+  <div class="hero-glow"></div>
+  <p class="hero-tag">// educacion-financiera v2.0 · Alto Valle · Patagonia</p>
+  <h1>Invertir<br>es una <em>decisión</em><br>educada.</h1>
+  <p class="hero-sub">Recursos, conceptos y herramientas para entender el mercado de capitales argentino y global.</p>
+
+  <div class="hero-quote">
+    <blockquote>
+      "Si tienes un minuto te diré cómo ganar dinero en el mercado: Compra barato y vende caro. Si tienes 5 o 10 años, te diré cuándo los precios están bajos y cuándo están altos."
+    </blockquote>
+    <cite>— Jesse Livermore</cite>
+  </div>
+
+  <p class="scroll-hint">SCROLL PARA EXPLORAR</p>
+</div>
+
+<!-- TICKER -->
+<div class="ticker-strip">
+  <div class="ticker-track">
+    <span class="ticker-item"><span class="sym">GGAL</span> <span class="up">▲ +2.4%</span></span>
+    <span class="ticker-item"><span class="sym">YPF</span> <span class="dn">▼ -0.8%</span></span>
+    <span class="ticker-item"><span class="sym">PAMP</span> <span class="up">▲ +1.1%</span></span>
+    <span class="ticker-item"><span class="sym">BMA</span> <span class="up">▲ +3.2%</span></span>
+    <span class="ticker-item"><span class="sym">LECAP</span> <span class="up">▲ TEM 4.1%</span></span>
+    <span class="ticker-item"><span class="sym">AL30</span> <span class="up">▲ +0.5%</span></span>
+    <span class="ticker-item"><span class="sym">MERVAL</span> <span class="up">▲ +1.8%</span></span>
+    <span class="ticker-item"><span class="sym">AAPL</span> <span class="up">▲ +0.4%</span></span>
+    <span class="ticker-item"><span class="sym">TSLA</span> <span class="dn">▼ -1.2%</span></span>
+    <span class="ticker-item"><span class="sym">MELI</span> <span class="up">▲ +2.0%</span></span>
+    <!-- duplicado para loop continuo -->
+    <span class="ticker-item"><span class="sym">GGAL</span> <span class="up">▲ +2.4%</span></span>
+    <span class="ticker-item"><span class="sym">YPF</span> <span class="dn">▼ -0.8%</span></span>
+    <span class="ticker-item"><span class="sym">PAMP</span> <span class="up">▲ +1.1%</span></span>
+    <span class="ticker-item"><span class="sym">BMA</span> <span class="up">▲ +3.2%</span></span>
+    <span class="ticker-item"><span class="sym">LECAP</span> <span class="up">▲ TEM 4.1%</span></span>
+    <span class="ticker-item"><span class="sym">AL30</span> <span class="up">▲ +0.5%</span></span>
+    <span class="ticker-item"><span class="sym">MERVAL</span> <span class="up">▲ +1.8%</span></span>
+    <span class="ticker-item"><span class="sym">AAPL</span> <span class="up">▲ +0.4%</span></span>
+    <span class="ticker-item"><span class="sym">TSLA</span> <span class="dn">▼ -1.2%</span></span>
+    <span class="ticker-item"><span class="sym">MELI</span> <span class="up">▲ +2.0%</span></span>
+  </div>
+</div>
+
+<!-- PRIMER PASO -->
+<section>
+  <p class="section-label reveal">Punto de partida</p>
+  <h2 class="section-title reveal">¿Por dónde empezar?</h2>
+  <p class="reveal" style="color: var(--text-dim); max-width: 580px; margin-bottom: 0.5rem;">
+    El primer inconveniente al entrar al mercado es no saber dónde comenzar. Esta es la hoja de ruta mínima.
+  </p>
+
+  <div class="primer-grid">
+    <div class="step-card reveal">
+      <p class="step-num">01 // CUENTA BANCARIA</p>
+      <h3>Caja de ahorro gratuita</h3>
+      <p>Por disposición del Banco Central, todos los bancos del país deben ofrecerte una caja de ahorro sin costo. Es el primer paso obligatorio.</p>
+    </div>
+    <div class="step-card reveal">
+      <p class="step-num">02 // CUENTA COMITENTE</p>
+      <h3>Elegir un broker CNV</h3>
+      <p>Es la cuenta que te permite operar en bolsa. Debe estar en un broker regulado por la Comisión Nacional de Valores (CNV).</p>
+    </div>
+    <div class="step-card reveal">
+      <p class="step-num">03 // PERFIL INVERSOR</p>
+      <h3>Test obligatorio</h3>
+      <p>Todo broker te pedirá completar un test para determinar tu perfil: conservador, moderado o agresivo. Define qué instrumentos son adecuados para vos.</p>
+    </div>
+    <div class="step-card reveal">
+      <p class="step-num">04 // PREMISAS BÁSICAS</p>
+      <h3>Invertir solo lo que podés perder</h3>
+      <p>Toda inversión conlleva riesgo. La diversificación y la investigación son fundamentales. Nunca invertir dinero que necesitás en el corto plazo.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- INSTRUMENTOS -->
+<div class="instr-section" id="instrumentos">
+  <div>
+    <p class="section-label reveal">Mercado de capitales</p>
+    <h2 class="section-title reveal">Instrumentos de inversión</h2>
+    <p class="reveal" style="color: var(--text-dim); max-width: 580px;">
+      El mercado de valores es como cualquier mercado — lo que se compra y vende son instrumentos financieros. Conocerlos es la base de toda decisión.
+    </p>
+  </div>
+
+  <div class="instr-tabs">
+    <button class="tab-btn active" onclick="filterInstr('all', this)">Todos</button>
+    <button class="tab-btn" onclick="filterInstr('fija', this)">Renta Fija</button>
+    <button class="tab-btn" onclick="filterInstr('var', this)">Renta Variable</button>
+    <button class="tab-btn" onclick="filterInstr('alt', this)">Alternativos</button>
+  </div>
+
+  <div class="instr-grid">
+    <div class="instr-card reveal" data-cat="fija">
+      <span class="instr-badge badge-fija">RENTA FIJA</span>
+      <h3>Bonos soberanos</h3>
+      <p>Deuda emitida por el Estado Nacional. Rinden un interés conocido. El riesgo principal es el incumplimiento del emisor.</p>
+      <div class="risk-indicator">
+        <span class="risk-label">RIESGO</span>
+        <div class="risk-dots">
+          <div class="risk-dot on"></div><div class="risk-dot on"></div><div class="risk-dot"></div><div class="risk-dot"></div><div class="risk-dot"></div>
+        </div>
+      </div>
+    </div>
+    <div class="instr-card reveal" data-cat="fija">
+      <span class="instr-badge badge-fija">RENTA FIJA</span>
+      <h3>LECAP</h3>
+      <p>Letras del Tesoro Capitalizables en Pesos. Corto plazo, intereses capitalizados mensualmente. Liquidez en mercado secundario (T+1).</p>
+      <div class="risk-indicator">
+        <span class="risk-label">RIESGO</span>
+        <div class="risk-dots">
+          <div class="risk-dot on"></div><div class="risk-dot"></div><div class="risk-dot"></div><div class="risk-dot"></div><div class="risk-dot"></div>
+        </div>
+      </div>
+    </div>
+    <div class="instr-card reveal" data-cat="fija">
+      <span class="instr-badge badge-fija">RENTA FIJA</span>
+      <h3>Obligaciones Negociables</h3>
+      <p>Bonos corporativos. Las empresas se financian emitiendo deuda. El inversor se convierte en acreedor con derecho a capital + interés.</p>
+      <div class="risk-indicator">
+        <span class="risk-label">RIESGO</span>
+        <div class="risk-dots">
+          <div class="risk-dot on"></div><div class="risk-dot on"></div><div class="risk-dot"></div><div class="risk-dot"></div><div class="risk-dot"></div>
+        </div>
+      </div>
+    </div>
+    <div class="instr-card reveal" data-cat="var">
+      <span class="instr-badge badge-var">RENTA VARIABLE</span>
+      <h3>Acciones</h3>
+      <p>Parte del capital de una empresa. Se gana por revalorización (comprar barato, vender caro) y por dividendos que reparte la empresa.</p>
+      <div class="risk-indicator">
+        <span class="risk-label">RIESGO</span>
+        <div class="risk-dots">
+          <div class="risk-dot on"></div><div class="risk-dot on"></div><div class="risk-dot on"></div><div class="risk-dot on"></div><div class="risk-dot"></div>
+        </div>
+      </div>
+    </div>
+    <div class="instr-card reveal" data-cat="var">
+      <span class="instr-badge badge-var">RENTA VARIABLE</span>
+      <h3>Fondos Comunes (FCI)</h3>
+      <p>Agrupan el capital de muchos inversores para invertir de forma diversificada. Existen de renta fija, variable, money market y mixtos.</p>
+      <div class="risk-indicator">
+        <span class="risk-label">RIESGO</span>
+        <div class="risk-dots">
+          <div class="risk-dot on"></div><div class="risk-dot on"></div><div class="risk-dot on"></div><div class="risk-dot"></div><div class="risk-dot"></div>
+        </div>
+      </div>
+    </div>
+    <div class="instr-card reveal" data-cat="alt">
+      <span class="instr-badge badge-alt">ALTERNATIVO</span>
+      <h3>Bitcoin / Criptomonedas</h3>
+      <p>Activos digitales descentralizados. Alta volatilidad y potencial de ganancia. Requieren comprensión profunda antes de invertir.</p>
+      <div class="risk-indicator">
+        <span class="risk-label">RIESGO</span>
+        <div class="risk-dots">
+          <div class="risk-dot on"></div><div class="risk-dot on"></div><div class="risk-dot on"></div><div class="risk-dot on"></div><div class="risk-dot on"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONCEPTOS CLAVE -->
+<section id="conceptos">
+  <p class="section-label reveal">Fundamentos</p>
+  <h2 class="section-title reveal">Conceptos clave al invertir</h2>
+  <p class="reveal" style="color: var(--text-dim); max-width: 560px;">
+    Tres variables que toda decisión de inversión debe considerar antes de ejecutarse.
+  </p>
+
+  <div class="conceptos-grid reveal">
+    <div class="concepto-item">
+      <div class="concepto-icon">📈</div>
+      <h4>Rendimiento esperado</h4>
+      <p>¿Cuánto puede rendir la inversión? Siempre hay que analizar el retorno potencial en relación al riesgo que se asume.</p>
+    </div>
+    <div class="concepto-item">
+      <div class="concepto-icon">⚖️</div>
+      <h4>Riesgo / Liquidez</h4>
+      <p>¿Qué tan probable es perder? ¿Con qué rapidez puedo convertir este activo en efectivo si lo necesito?</p>
+    </div>
+    <div class="concepto-item">
+      <div class="concepto-icon">⏱️</div>
+      <h4>Horizonte temporal</h4>
+      <p>¿En cuánto tiempo necesito el dinero? A mayor plazo, mayor tolerancia al riesgo y más opciones de inversión disponibles.</p>
+    </div>
+    <div class="concepto-item">
+      <div class="concepto-icon">🔀</div>
+      <h4>Diversificación</h4>
+      <p>No concentrar todo en un solo activo. Distribuir la inversión entre distintos instrumentos reduce el riesgo total de la cartera.</p>
+    </div>
+    <div class="concepto-item">
+      <div class="concepto-icon">💰</div>
+      <h4>Dividendos</h4>
+      <p>Parte de las ganancias que una empresa reparte entre sus accionistas. No todas las empresas los pagan, ni están obligadas a hacerlo.</p>
+    </div>
+    <div class="concepto-item">
+      <div class="concepto-icon">🛡️</div>
+      <h4>Perfil de inversor</h4>
+      <p>La combinación de tu tolerancia al riesgo, objetivos financieros y horizonte temporal. Define qué instrumentos son aptos para vos.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PERFILES -->
+<section style="padding-top: 0;">
+  <p class="section-label reveal">Test de perfil</p>
+  <h2 class="section-title reveal">¿Qué tipo de inversor sos?</h2>
+
+  <div class="perfiles-grid">
+    <div class="perfil-card reveal">
+      <div class="perfil-emoji">🌱</div>
+      <h3 style="color: var(--blue);">Conservador</h3>
+      <p>Priorizás preservar el capital. Preferís certeza sobre rendimiento. Instrumentos: plazos fijos, LECAPs, bonos corto plazo.</p>
+      <div class="perfil-bar">
+        <div class="perfil-seg" style="background: var(--blue);"></div>
+        <div class="perfil-seg"></div><div class="perfil-seg"></div>
+      </div>
+    </div>
+    <div class="perfil-card reveal">
+      <div class="perfil-emoji">⚡</div>
+      <h3 style="color: var(--gold);">Moderado</h3>
+      <p>Aceptás cierta volatilidad a cambio de mayor rendimiento. Mix de renta fija y variable. Bonos + acciones sólidas.</p>
+      <div class="perfil-bar">
+        <div class="perfil-seg" style="background: var(--gold);"></div>
+        <div class="perfil-seg" style="background: var(--gold);"></div>
+        <div class="perfil-seg"></div>
+      </div>
+    </div>
+    <div class="perfil-card reveal">
+      <div class="perfil-emoji">🔥</div>
+      <h3 style="color: var(--red);">Agresivo</h3>
+      <p>Buscás máximo rendimiento y tolerás pérdidas temporales importantes. Acciones, CEDEARs, cripto, opciones.</p>
+      <div class="perfil-bar">
+        <div class="perfil-seg" style="background: var(--red);"></div>
+        <div class="perfil-seg" style="background: var(--red);"></div>
+        <div class="perfil-seg" style="background: var(--red);"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- BROKERS -->
+<section id="brokers">
+  <p class="section-label reveal">Dónde operar</p>
+  <h2 class="section-title reveal">Brokers regulados por la CNV</h2>
+  <p class="reveal" style="color: var(--text-dim); max-width: 580px;">
+    Para invertir en el mercado de capitales argentino necesitás una <strong style="color:var(--text)">cuenta comitente</strong> en un broker regulado por la CNV. Podés pedir un asesor idóneo sin costo.
+  </p>
+
+  <div class="brokers-row reveal">
+    <a href="https://www.bullmarketbrokers.com/" target="_blank" class="broker-tag">Bull Market Brokers</a>
+    <a href="https://balanz.com/" target="_blank" class="broker-tag">Balanz</a>
+    <a href="https://www.inviu.com.ar/" target="_blank" class="broker-tag">Inviu</a>
+    <a href="https://www.invertironline.com/" target="_blank" class="broker-tag">InvertirOnLine</a>
+  </div>
+
+  <div class="cnv-note reveal">
+    <strong>⚠ VERIFICÁ TU ASESOR</strong><br>
+    Antes de operar, confirmá que tu asesor esté registrado como idóneo habilitado en el buscador oficial de la CNV:<br>
+    <a href="https://www.cnv.gov.ar/sitioweb/buscadorglobal" target="_blank">cnv.gov.ar/sitioweb/buscadorglobal</a>
+  </div>
+</section>
+
+<!-- BIBLIOTECA -->
+<section class="biblioteca-section" id="biblioteca">
+  <div style="max-width:1100px; margin: 0 auto;">
+    <p class="section-label reveal">Recursos</p>
+    <h2 class="section-title reveal">Biblioteca de referencia</h2>
+    <p class="reveal" style="color: var(--text-dim); max-width: 560px;">
+      Selección de libros y materiales para profundizar. Desde introducción hasta análisis técnico avanzado.
+    </p>
+
+    <div class="libro-grid">
+      <div class="libro-item reveal">
+        <div class="libro-spine" style="background: var(--gold);"></div>
+        <div class="libro-info">
+          <h4>El Inversor Inteligente</h4>
+          <p>Benjamin Graham · La biblia del value investing. Fundamentos para pensar el largo plazo.</p>
+        </div>
+      </div>
+      <div class="libro-item reveal">
+        <div class="libro-spine" style="background: var(--blue);"></div>
+        <div class="libro-info">
+          <h4>Análisis Técnico de los Mercados Financieros</h4>
+          <p>John J. Murphy · Referencia estándar del análisis técnico. Tendencias, patrones, indicadores.</p>
+        </div>
+      </div>
+      <div class="libro-item reveal">
+        <div class="libro-spine" style="background: var(--green);"></div>
+        <div class="libro-info">
+          <h4>Mercado de Capitales — Manual para no especialistas</h4>
+          <p>Introducción accesible al funcionamiento del mercado argentino de capitales.</p>
+        </div>
+      </div>
+      <div class="libro-item reveal">
+        <div class="libro-spine" style="background: var(--red);"></div>
+        <div class="libro-info">
+          <h4>Manual Básico de Trading y Estrategias</h4>
+          <p>Operatoria práctica, gestión del riesgo y estrategias básicas para comenzar.</p>
+        </div>
+      </div>
+      <div class="libro-item reveal">
+        <div class="libro-spine" style="background: #a78bfa;"></div>
+        <div class="libro-info">
+          <h4>Educación Financiera para Activarte</h4>
+          <p>Laura Pereyra · Enfoque práctico y personal para tomar las riendas de tus finanzas.</p>
+        </div>
+      </div>
+      <div class="libro-item reveal">
+        <div class="libro-spine" style="background: #f97316;"></div>
+        <div class="libro-info">
+          <h4>Bitcoin: El Paper Original</h4>
+          <p>Satoshi Nakamoto · El documento fundacional de las criptomonedas. Lectura obligatoria para entender el activo.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <div class="logo-foot">CEG · Educación Financiera</div>
+    <p style="margin-top:0.4rem;">cristiang.profe@gmail.com · Alto Valle, Río Negro, Argentina</p>
+  </div>
+  <p class="disclaimer">
+    Este sitio tiene fines exclusivamente educativos. No constituye asesoramiento financiero ni recomendación de inversión. Toda decisión de inversión implica riesgos.
+  </p>
+</footer>
+
+<script>
+  // Reveal on scroll
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 60);
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.08 });
+  reveals.forEach(el => observer.observe(el));
+
+  // Instrument filter
+  function filterInstr(cat, btn) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.instr-card').forEach(card => {
+      card.style.display = (cat === 'all' || card.dataset.cat === cat) ? '' : 'none';
+    });
+  }
+</script>
+</body>
+</html>
